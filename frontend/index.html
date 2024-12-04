@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario y Consulta</title>
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario y Consulta</h1>
+
+        <!-- Formulario -->
+        <form id="entryForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Mensaje:</label>
+            <textarea id="message" name="message" required></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+
+        <!-- Buscador -->
+        <div id="searchSection">
+            <h2>Buscar Entradas</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="searchQuery" placeholder="Buscar por nombre, correo o mensaje">
+                <button id="searchButton">Buscar</button>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <h2>Entradas</h2>
+        <table id="entriesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Mensaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán las filas con JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Archivo JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
