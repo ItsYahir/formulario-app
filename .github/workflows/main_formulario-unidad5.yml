@@ -42,22 +42,18 @@ jobs:
         with:
           name: release
 
-      - name: Desplegar Backend a Azure
-        env:
-          AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        run: |
-          echo "Desplegando backend a Azure..."
-          curl -X POST \
-          -H "Content-Type: application/zip" \
-          --data-binary @backend.zip \
-          "https://formulario-unidad5-fhfuerbqbpgth7bn.eastus2-01.scm.azurewebsites.net/api/zipdeploy"
+      - name: Deploy Backend
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "formulario-unidad5" # Reemplaza con el nombre de tu aplicación en Azure
+          slot-name: "production"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./backend.zip
 
-      - name: Desplegar Frontend a Azure
-        env:
-          AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        run: |
-          echo "Desplegando frontend a Azure..."
-          curl -X POST \
-          -H "Content-Type: application/zip" \
-          --data-binary @frontend.zip \
-          "https://formulario-unidad5-fhfuerbqbpgth7bn.eastus2-01.scm.azurewebsites.net/api/zipdeploy"
+      - name: Deploy Frontend
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "formulario-unidad5" # Reemplaza con el nombre de tu aplicación en Azure
+          slot-name: "production"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./frontend.zip
