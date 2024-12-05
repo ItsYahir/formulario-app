@@ -12,26 +12,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Crear zip para el frontend
+      - name: Debug - Mostrar archivos del frontend
+        run: ls -la root/frontend
+
       - name: Comprimir Frontend
         run: |
           cd root/frontend
           zip -r ../../frontend.zip .
 
-      # Crear zip para el backend
+      - name: Debug - Mostrar archivos del backend
+        run: ls -la root/backend
+
       - name: Comprimir Backend
         run: |
           cd root/backend
           zip -r ../../backend.zip .
 
-      # Subir artefactos
       - name: Subir Artefactos
         uses: actions/upload-artifact@v3
         with:
           name: release
           path: |
-            backend.zip
             frontend.zip
+            backend.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,7 +45,10 @@ jobs:
         with:
           name: release
 
-      # Desplegar Backend
+      - name: Debug - Probar conectividad a Azure
+        run: |
+          ping formulario-unidad5-fhfuerbqbpgth7bn.scm.azurewebsites.net || echo "Ping failed"
+
       - name: Deploy Backend to Azure
         env:
           AZURE_USER: ${{ secrets.AZURE_USER }}
@@ -53,7 +59,6 @@ jobs:
           curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
           --data-binary @backend.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
 
-      # Desplegar Frontend
       - name: Deploy Frontend to Azure
         env:
           AZURE_USER: ${{ secrets.AZURE_USER }}
