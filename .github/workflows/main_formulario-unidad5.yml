@@ -50,7 +50,7 @@ jobs:
           curl -X POST \
           -H "Content-Type: application/zip" \
           --data-binary @backend.zip \
-          "https://<NOMBRE_BACKEND>.scm.azurewebsites.net/api/zipdeploy"
+          "https://formulario-unidad5-fhfuerbqbpgth7bn.eastus2-01.scm.azurewebsites.net/api/zipdeploy"
 
       - name: Desplegar Frontend a Azure
         env:
@@ -60,4 +60,4 @@ jobs:
           curl -X POST \
           -H "Content-Type: application/zip" \
           --data-binary @frontend.zip \
-          "https://<NOMBRE_FRONTEND>.scm.azurewebsites.net/api/zipdeploy"
+          "https://formulario-unidad5-fhfuerbqbpgth7bn.eastus2-01.scm.azurewebsites.net/api/zipdeploy"
