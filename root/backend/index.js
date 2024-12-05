@@ -39,15 +39,20 @@ app.post('/api/entries', (req, res) => {
 });
 
 // Servir el frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+const frontendPath = path.join(__dirname, 'frontend');
+app.use(express.static(frontendPath));
 
+// Capturar cualquier ruta que no sea API y servir `index.html`
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
+        if (err) {
+            res.status(500).send('Error al cargar la página');
+        }
+    });
 });
 
 // Puerto del servidor
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

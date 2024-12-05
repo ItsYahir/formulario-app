@@ -16,6 +16,11 @@ jobs:
         working-directory: ./root/backend
         run: npm install
 
+      - name: Verificar contenido del directorio backend
+        run: |
+          ls -la ./root/backend
+          ls -la ./root/backend/frontend
+
       - name: Comprimir todo en un ZIP
         run: |
           cd root/backend
