@@ -21,11 +21,11 @@ jobs:
           cd root/backend
           zip -r ../../deploy.zip .
 
-      - name: Subir a Azure
+      - name: Deploy to Azure
         env:
-          AZURE_USER: ${{ secrets.AZURE_USER }}
-          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-          AZURE_PUBLISH_URL: ${{ secrets.AZURE_BACKEND_PUBLISH_URL }}
+          AZURE_USER: '$formulario-unidad5'
+          AZURE_PASSWORD: 'rNfA8ZR4zF6h7rkxeSLk5uGi9P5RiR3dY9y5a4HRvz4mwJLzZ71d6dugovbc'
+          AZURE_PUBLISH_URL: formulario-unidad5-fhfuerbqbpgth7bn.scm.eastus2-01.azurewebsites.net
         run: |
           echo "Deploying application to Azure..."
           curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
