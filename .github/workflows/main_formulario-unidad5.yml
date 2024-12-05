@@ -24,45 +24,42 @@ jobs:
           cd root/backend
           zip -r ../../backend.zip .
 
-      # Subir artefactos para despliegue
+      # Subir artefactos
       - name: Subir Artefactos
         uses: actions/upload-artifact@v3
         with:
           name: release
           path: |
-            frontend.zip
             backend.zip
+            frontend.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Descargar artefactos
+      - name: Descargar Artefactos
         uses: actions/download-artifact@v3
         with:
           name: release
 
-      # Iniciar sesión en Azure
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: >
-            {
-              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
-              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
-              "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
-            }
-
       # Desplegar Backend
-      - name: Deploy Backend
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "formulario-unidad5" # Ajusta si el nombre no es correcto
-          package: ./backend.zip
+      - name: Deploy Backend to Azure
+        env:
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_PUBLISH_URL: ${{ secrets.AZURE_BACKEND_PUBLISH_URL }}
+        run: |
+          echo "Deploying backend to Azure..."
+          curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
+          --data-binary @backend.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
 
       # Desplegar Frontend
-      - name: Deploy Frontend
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "formulario-unidad5" # Ajusta si el nombre no es correcto
-          package: ./frontend.zip
+      - name: Deploy Frontend to Azure
+        env:
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_PUBLISH_URL: ${{ secrets.AZURE_FRONTEND_PUBLISH_URL }}
+        run: |
+          echo "Deploying frontend to Azure..."
+          curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
+          --data-binary @frontend.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
