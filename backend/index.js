@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path'); // Importar path para servir el frontend
+const path = require('path');
 
 const app = express();
 
@@ -29,8 +29,8 @@ db.connect((err) => {
     }
 });
 
-// Servir el frontend como contenido estático
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Servir el frontend desde la carpeta build
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Endpoint para obtener datos
 app.get('/api/entries', (req, res) => {
@@ -72,13 +72,13 @@ app.post('/api/entries', (req, res) => {
     );
 });
 
-// Endpoint básico para verificar el estado del servidor
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+// Servir index.html para cualquier ruta no manejada
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
-}); 
+});

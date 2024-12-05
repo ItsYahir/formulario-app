@@ -17,20 +17,40 @@ jobs:
         with:
           node-version: '16'
 
+      # Instalar dependencias para el backend
       - name: Install backend dependencies
         run: |
           cd backend
           npm install
 
-      - name: Create release zip
+      # Crear release del backend
+      - name: Create backend release zip
         run: |
-          zip -r release.zip backend frontend
+          cd backend
+          zip -r ../backend.zip .
 
-      - name: Upload release artifact
+      # Instalar dependencias para el frontend
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      # Construir el frontend
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+          cd build
+          zip -r ../../frontend.zip .
+
+      # Subir artefactos
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: release
-          path: release.zip
+          path: |
+            backend.zip
+            frontend.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,12 +61,22 @@ jobs:
         with:
           name: release
 
-      - name: Deploy to Azure
+      - name: Deploy Backend to Azure
         env:
           AZURE_USER: ${{ secrets.AZURE_USER }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
           AZURE_PUBLISH_URL: ${{ secrets.AZURE_PUBLISH_URL }}
         run: |
-          echo "Deploying to Azure..."
+          echo "Deploying backend to Azure..."
           curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
-          --data-binary @release.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
+          --data-binary @backend.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
+
+      - name: Deploy Frontend to Azure
+        env:
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_PUBLISH_URL: ${{ secrets.AZURE_PUBLISH_URL }}
+        run: |
+          echo "Deploying frontend to Azure..."
+          curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
+          --data-binary @frontend.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
