@@ -1,0 +1,63 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Crear zip para el frontend
+      - name: Comprimir Frontend
+        run: |
+          cd root/frontend
+          zip -r ../../frontend.zip .
+
+      # Crear zip para el backend
+      - name: Comprimir Backend
+        run: |
+          cd root/backend
+          zip -r ../../backend.zip .
+
+      # Subir artefactos para despliegue
+      - name: Subir Artefactos
+        uses: actions/upload-artifact@v3
+        with:
+          name: release
+          path: |
+            frontend.zip
+            backend.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Descargar artefactos
+        uses: actions/download-artifact@v3
+        with:
+          name: release
+
+      - name: Desplegar Backend a Azure
+        env:
+          AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_BACKEND_PROFILE }}
+        run: |
+          echo "Desplegando backend a Azure..."
+          curl -X POST \
+          -H "Content-Type: application/zip" \
+          --data-binary @backend.zip \
+          "https://<NOMBRE_BACKEND>.scm.azurewebsites.net/api/zipdeploy"
+
+      - name: Desplegar Frontend a Azure
+        env:
+          AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_FRONTEND_PROFILE }}
+        run: |
+          echo "Desplegando frontend a Azure..."
+          curl -X POST \
+          -H "Content-Type: application/zip" \
+          --data-binary @frontend.zip \
+          "https://<NOMBRE_FRONTEND>.scm.azurewebsites.net/api/zipdeploy"
