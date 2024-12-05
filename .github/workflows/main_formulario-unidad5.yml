@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Instalar dependencias
+      - name: Instalar dependencias del backend
         working-directory: ./root/backend
         run: npm install
 
@@ -21,12 +21,11 @@ jobs:
           cd root/backend
           zip -r ../../deploy.zip .
 
-      - name: Deploy to Azure
+      - name: Subir a Azure
         env:
-          AZURE_USER: '$formulario-unidad5'
-          AZURE_PASSWORD: 'rNfA8ZR4zF6h7rkxeSLk5uGi9P5RiR3dY9y5a4HRvz4mwJLzZ71d6dugovbc'
-          AZURE_PUBLISH_URL: formulario-unidad5-fhfuerbqbpgth7bn.scm.eastus2-01.azurewebsites.net
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_PUBLISH_URL: ${{ secrets.AZURE_PUBLISH_URL }}
         run: |
-          echo "Deploying application to Azure..."
           curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
           --data-binary @deploy.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
