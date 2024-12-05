@@ -43,6 +43,11 @@ jobs:
           name: release
 
       - name: Deploy to Azure
+        env:
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_PUBLISH_URL: ${{ secrets.AZURE_PUBLISH_URL }}
         run: |
           echo "Deploying to Azure..."
-          # Aquí puedes incluir comandos para el despliegue en Azure.
+          curl -X POST -u $AZURE_USER:$AZURE_PASSWORD \
+          --data-binary @release.zip https://$AZURE_PUBLISH_URL/api/zipdeploy
