@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +40,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -54,9 +54,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4161F6E544B446AE87BC6FCCBF3A9F50 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_28F052A09D14455DA92AB3C697187728 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5C0F3CA04EA44CA4809841579BFABCE6 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -64,5 +64,5 @@ jobs:
         with:
           app-name: 'formulario-unidad5'
           slot-name: 'Production'
-          package: .
+          package: ./release.zip
           
