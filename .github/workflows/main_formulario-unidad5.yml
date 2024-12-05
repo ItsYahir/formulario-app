@@ -12,36 +12,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      # Instalar dependencias para el backend
-      - name: Install backend dependencies
+      # Crear zip para el frontend
+      - name: Zip static frontend
         run: |
-          cd backend
-          npm install
+          cd frontend
+          zip -r ../frontend.zip .
 
-      # Crear release del backend
-      - name: Create backend release zip
+      # Crear zip para el backend
+      - name: Zip backend
         run: |
           cd backend
           zip -r ../backend.zip .
-
-      # Instalar dependencias para el frontend
-      - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm install
-
-      # Construir el frontend
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
-          cd build
-          zip -r ../../frontend.zip .
 
       # Subir artefactos
       - name: Upload artifacts

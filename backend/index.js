@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
+const path = require('path'); // Importar path para servir archivos estáticos
 
 const app = express();
 
@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Configuración de la conexión a MySQL
+// Configuración de la conexión a MySQL (desactívalo si no estás usando la base de datos por ahora)
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'app_user',
@@ -18,7 +18,6 @@ const db = mysql.createConnection({
     database: 'form_db',
 });
 
-// Conexión a la base de datos
 db.connect((err) => {
     if (err) {
         console.error('Error conectándose a la base de datos:', err.message);
@@ -29,8 +28,8 @@ db.connect((err) => {
     }
 });
 
-// Servir el frontend desde la carpeta build
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+// Servir frontend como archivos estáticos
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Endpoint para obtener datos
 app.get('/api/entries', (req, res) => {
@@ -72,9 +71,9 @@ app.post('/api/entries', (req, res) => {
     );
 });
 
-// Servir index.html para cualquier ruta no manejada
+// Redirigir todas las rutas al frontend
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // Iniciar el servidor
