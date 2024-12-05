@@ -7,7 +7,7 @@ let entries = []; // Variable para almacenar las entradas obtenidas del servidor
 
 // Función para obtener y mostrar las entradas
 async function fetchEntries() {
-    const response = await fetch('http://localhost:3001/api/entries');
+    const response = await fetch('/api/entries'); // URL relativa
     entries = await response.json();
 
     // Mostrar todas las entradas
@@ -41,12 +41,12 @@ form.addEventListener('submit', async (e) => {
     const message = document.getElementById('message').value;
 
     // Enviar los datos al backend
-    await fetch('http://localhost:3001/api/entries', {
+    await fetch('/api/entries', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, message })
+        body: JSON.stringify({ name, email, message }),
     });
 
     // Limpiar el formulario

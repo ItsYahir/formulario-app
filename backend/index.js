@@ -1,7 +1,8 @@
 const express = require('express');
-const mysql = require('mysql2'); // Cambiado a mysql2 para mejor compatibilidad
+const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path'); // Importar path para servir el frontend
 
 const app = express();
 
@@ -11,22 +12,25 @@ app.use(bodyParser.json());
 
 // Configuración de la conexión a MySQL
 const db = mysql.createConnection({
-    host: 'localhost', // Cambiar si estás usando un host remoto
-    user: 'app_user', // Cambia a 'root' si estás usando el usuario root
-    password: 'AppUserSecure#2024', // Cambia a la contraseña que configuraste
-    database: 'form_db' // Cambia al nombre de tu base de datos
+    host: 'localhost',
+    user: 'app_user',
+    password: 'AppUserSecure#2024',
+    database: 'form_db',
 });
 
 // Conexión a la base de datos
 db.connect((err) => {
     if (err) {
         console.error('Error conectándose a la base de datos:', err.message);
-        db.connected = false; // Bandera para indicar que la conexión falló
+        db.connected = false;
     } else {
         console.log('Conectado a la base de datos');
-        db.connected = true; // Bandera para indicar que la conexión fue exitosa
+        db.connected = true;
     }
 });
+
+// Servir el frontend como contenido estático
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Endpoint para obtener datos
 app.get('/api/entries', (req, res) => {
@@ -70,11 +74,11 @@ app.post('/api/entries', (req, res) => {
 
 // Endpoint básico para verificar el estado del servidor
 app.get('/', (req, res) => {
-    res.send('Servidor y backend funcionando correctamente');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // Iniciar el servidor
-const PORT = process.env.PORT || 3001; // Usa el puerto de entorno o el 3001 por defecto
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+}); 

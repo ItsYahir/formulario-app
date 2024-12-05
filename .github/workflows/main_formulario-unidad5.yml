@@ -17,21 +17,20 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: |
           cd backend
           npm install
 
       - name: Create release zip
         run: |
-          cd backend
-          zip -r release.zip .
+          zip -r release.zip backend frontend
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v3
         with:
           name: release
-          path: backend/release.zip
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
