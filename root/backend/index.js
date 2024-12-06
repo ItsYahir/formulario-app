@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
 const mysql = require('mysql2/promise');
 
 const app = express();
@@ -10,31 +9,40 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Conexión a la base de datos MySQL en Azure
-const db = mysql.createPool({
-    host: 'miapp-mysql-flex.mysql.database.azure.com',
-    user: 'adminuser@miapp-mysql-flex',
-    password: 'MySQL2024!',
-    database: 'miapp', 
-    port: 3306,
-    ssl: {
-        rejectUnauthorized: true, 
-    },
+// Configuración de la base de datos
+const pool = mysql.createPool({
+    host: 'miapp-mysql-flex.mysql.database.azure.com', // Cambia por tu host
+    user: 'adminuser', // Cambia por tu usuario
+    password: 'MySQL2024!', // Cambia por tu contraseña
+    database: 'entries', // Nombre de tu base de datos
+    ssl: { rejectUnauthorized: true } // Requisito de SSL para Azure
 });
 
-// Rutas de API
-// Obtener todas las entradas
+// Test de conexión
+async function testConnection() {
+    try {
+        const connection = await pool.getConnection();
+        console.log('Conexión exitosa a la base de datos');
+        connection.release();
+    } catch (error) {
+        console.error('Error al conectar a la base de datos:', error);
+        process.exit(1);
+    }
+}
+
+testConnection();
+
+// Rutas de la API
 app.get('/api/entries', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM entries');
+        const [rows] = await pool.query('SELECT * FROM entries');
         res.json(rows);
     } catch (error) {
         console.error('Error al obtener las entradas:', error);
-        res.status(500).json({ error: 'Error al obtener los datos.' });
+        res.status(500).json({ error: 'Error al obtener las entradas' });
     }
 });
 
-// Crear una nueva entrada
 app.post('/api/entries', async (req, res) => {
     const { name, email, message } = req.body;
 
@@ -43,22 +51,19 @@ app.post('/api/entries', async (req, res) => {
     }
 
     try {
-        const [result] = await db.query(
-            'INSERT INTO entries (name, email, message) VALUES (?, ?, ?)',
-            [name, email, message]
-        );
+        const [result] = await pool.query('INSERT INTO entries (name, email, message) VALUES (?, ?, ?)', [name, email, message]);
         res.json({ id: result.insertId, name, email, message });
     } catch (error) {
-        console.error('Error al insertar una entrada:', error);
-        res.status(500).json({ error: 'Error al guardar los datos.' });
+        console.error('Error al insertar la entrada:', error);
+        res.status(500).json({ error: 'Error al insertar la entrada' });
     }
 });
 
-// Servir el frontend
+// Servir el frontend (opcional)
+const path = require('path');
 const frontendPath = path.join(__dirname, 'frontend');
 app.use(express.static(frontendPath));
 
-// Capturar cualquier ruta que no sea API y servir `index.html`
 app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
         if (err) {
