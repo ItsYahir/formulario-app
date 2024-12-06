@@ -14,7 +14,7 @@ const pool = mysql.createPool({
     host: 'miapp-mysql-flex.mysql.database.azure.com', // Cambia por tu host
     user: 'adminuser', // Cambia por tu usuario
     password: 'MySQL2024!', // Cambia por tu contraseña
-    database: 'entries', // Nombre de tu base de datos
+    database: 'miapp', // Nombre de tu base de datos
     ssl: { rejectUnauthorized: true } // Requisito de SSL para Azure
 });
 
